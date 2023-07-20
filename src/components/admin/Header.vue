@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
-import { useSidebar } from '../composables/useSidebar'
+import { useSidebar } from '../../composables/useSidebar'
 
 const dropdownOpen = ref(false)
 const { isOpen } = useSidebar()

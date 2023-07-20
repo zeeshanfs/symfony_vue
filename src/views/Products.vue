@@ -11,7 +11,7 @@
       <div class="max-w-sm mt-6 overflow-hidden bg-white rounded shadow-lg">
         <img
           class="w-full"
-          src="https://picsum.photos/id/1016/384/234"
+          src="/images/1016-384x234.jpg"
           alt="Sunset in the mountains"
         >
         <div class="px-6 py-4">
@@ -45,7 +45,7 @@
       <div class="w-full max-w-sm mt-6 lg:max-w-full lg:flex">
         <div
           class="flex-none h-48 overflow-hidden text-center bg-cover rounded-t lg:h-auto lg:w-48 lg:rounded-t-none lg:rounded-l"
-          style="background-image: url('https://picsum.photos/id/0/192/213')"
+          style="background-image: url('/images/0-192x213.jpg')"
           title="Woman holding a mug"
         />
         <div

@@ -1,5 +1,6 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import Modal from './Modal.vue';
 
 interface User {
   name: string
@@ -25,12 +26,12 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
 <template>
   <div>
     <h3 class="text-3xl font-medium text-gray-700">
-      Dashboard
+      Prodcuts
     </h3>
 
-    <div class="mt-4">
+    <div class="mt-4 dashboard ">
       <div class="flex flex-wrap -mx-6">
-        <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
+        <!-- <div class="w-full px-6 sm:w-1/2 xl:w-1/3">
           <div
             class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm"
           >
@@ -114,9 +115,9 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
               </div>
             </div>
           </div>
-        </div>
+        </div> -->
 
-        <div class="w-full px-6 mt-6 sm:w-1/2 xl:w-1/3 xl:mt-0">
+        <div class="w-full px-6 mt-6 xl:mt-0">
           <div
             class="flex items-center px-5 py-6 bg-white rounded-md shadow-sm"
           >
@@ -147,11 +148,14 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
                 215,542
               </h4>
               <div class="text-gray-500">
-                Available Products
+                Total Products
               </div>
             </div>
           </div>
         </div>
+      </div>
+      <div>
+        <Modal />
       </div>
     </div>
 
@@ -173,17 +177,17 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
                 <th
                   class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
-                  Title
+                  Images
                 </th>
                 <th
                   class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
-                  Status
+                  Price
                 </th>
                 <th
                   class="px-6 py-3 text-xs font-medium leading-4 tracking-wider text-left text-gray-500 uppercase border-b border-gray-200 bg-gray-50"
                 >
-                  Role
+                  Category
                 </th>
                 <th class="px-6 py-3 border-b border-gray-200 bg-gray-50" />
               </tr>
@@ -191,37 +195,22 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
 
             <tbody class="bg-white">
               <tr v-for="(u, index) in users" :key="index">
-                <td
-                  class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
-                >
+
+                <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
+                  <div class="text-sm leading-5 text-gray-900">
+                    {{ u.title }}
+                  </div>
+                </td>
+
+                <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                   <div class="flex items-center">
                     <div class="flex-shrink-0 w-10 h-10">
                       <img
-                        class="w-10 h-10 rounded-full"
+                        class="w-10 h-10"
                         src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
                         alt=""
                       >
                     </div>
-
-                    <div class="ml-4">
-                      <div class="text-sm font-medium leading-5 text-gray-900">
-                        {{ u.name }}
-                      </div>
-                      <div class="text-sm leading-5 text-gray-500">
-                        {{ u.email }}
-                      </div>
-                    </div>
-                  </div>
-                </td>
-
-                <td
-                  class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
-                >
-                  <div class="text-sm leading-5 text-gray-900">
-                    {{ u.title }}
-                  </div>
-                  <div class="text-sm leading-5 text-gray-500">
-                    {{ u.title2 }}
                   </div>
                 </td>
 
@@ -252,3 +241,10 @@ const users = ref<User[]>([...Array(10).keys()].map(() => testUser))
     </div>
   </div>
 </template>
+<style>
+.dashboard {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+}
+</style>

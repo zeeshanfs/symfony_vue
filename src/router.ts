@@ -1,57 +1,62 @@
 import type { RouteRecordRaw } from 'vue-router'
 import { createRouter, createWebHistory } from 'vue-router'
 
-import Dashboard from './views/Dashboard.vue'
-import Forms from './views/Forms.vue'
-import Tables from './views/Tables.vue'
-import UIElements from './views/UIElements.vue'
-import Login from './views/Login.vue'
-import Modal from './views/Modal.vue'
-import Card from './views/Card.vue'
-import Blank from './views/Blank.vue'
+import Prodcuts from './views/admin/Prodcuts.vue'
+import Forms from './views/admin/Forms.vue'
+import Category from './views/admin/Category.vue'
+import Tables from './views/admin/Tables.vue'
+import UIElements from './views/admin/UIElements.vue'
+import Login from './views/admin/Login.vue'
+import Card from './views/Products.vue'
 
 const routes: RouteRecordRaw[] = [
   {
-    path: '/',
+    path: '/login',
     name: 'Login',
     component: Login,
     meta: { layout: 'empty' },
   },
   {
-    path: '/dashboard',
-    name: 'Dashboard',
-    component: Dashboard,
+    path: '/',
+    component: Prodcuts,
   },
   {
-    path: '/forms',
+    path: '/admin/',
+    name: 'admin',
+    component: Prodcuts,
+  },
+  {
+    path: '/admin/prodcuts',
+    name: 'Prodcuts',
+    //redirect: '/login',
+    component: Prodcuts,
+  },
+  {
+    path: '/admin/forms',
     name: 'Forms',
     component: Forms,
   },
   {
-    path: '/cards',
-    name: 'Cards',
-    component: Card,
+    path: '/admin/category',
+    name: 'Category',
+    component: Category,
   },
   {
-    path: '/tables',
+    path: '/prodcuts',
+    name: 'Cards',
+    component: Card,
+    meta: { layout: 'page' },
+  },
+  {
+    path: '/admin/tables',
     name: 'Tables',
     component: Tables,
   },
   {
-    path: '/ui-elements',
+    path: '/admin/ui-elements',
     name: 'UIElements',
     component: UIElements,
-  },
-  {
-    path: '/modal',
-    name: 'Modal',
-    component: Modal,
-  },
-  {
-    path: '/blank',
-    name: 'Blank',
-    component: Blank,
-  },
+  }
 ]
 
 const router = createRouter({

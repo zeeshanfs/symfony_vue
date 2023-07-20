@@ -7,7 +7,7 @@ const email = ref('johndoe@mail.com')
 const password = ref('@#!@#asdf1231!_!@#')
 
 function login() {
-  router.push('/dashboard')
+  router.push('/admin/prodcuts')
 }
 </script>
 
@@ -34,7 +34,7 @@ function login() {
             fill="white"
           />
         </svg>
-        <span class="text-2xl font-semibold text-gray-700">V-Dashboard</span>
+        <span class="text-2xl font-semibold text-gray-700">Login</span>
       </div>
 
       <form class="mt-4" @submit.prevent="login">
