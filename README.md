@@ -1,4 +1,4 @@
-## Project setup
+## Project Setup
 
 ## FrontEnd
 
@@ -6,13 +6,13 @@
 yarn install
 ```
 
-### Compiles and minifies for production
+### Compiles and minifies
 
 ```
 yarn build
 ```
 
-### Compiles and hot-reloads for development
+### run server
 
 ```
 yarn dev
@@ -28,7 +28,11 @@ cd server
 composer install
 ```
 
-### Compiles and minifies for production
+```
+symfony console doctrine:migrations:migrate
+```
+
+### Compiles and minifies
 
 ```
 symfony server:start

@@ -1,24 +1,27 @@
 <script setup lang="ts">
 import { ref } from 'vue'
+import axios from 'axios'
 
-interface User {
-  username: string
-  email: string
-  password: string
-  confirm: string
+interface Category {
+  name: string
 }
 
-const user = ref<User>({
-  username: '',
-  email: '',
-  password: '',
-  confirm: '',
+const category = ref<Category>({
+  name: ''
 })
 
-function register() {
-  const data = JSON.parse(JSON.stringify(user.value))
-  // eslint-disable-next-line no-console
-  console.log('Registered: ', data)
+fetch('http://localhost:8000/api/category')
+    .then(response => response.json())
+    .then(data => category.value = data);
+
+function submit() {
+  const dataToSend = JSON.parse(JSON.stringify(category.value))
+  axios.post('http://localhost:8000/api/category', dataToSend);
+    try {
+      console.log('Data Submitted: ', dataToSend);
+      } catch (error) {
+        console.error('Error making POST request:', error);
+      }
 }
 </script>
 
@@ -33,7 +36,7 @@ function register() {
         <div
           class="w-full max-w-sm overflow-hidden bg-white border rounded-md shadow-md"
         >
-          <form>
+          <form @submit.prevent="submit">
             <div
               class="flex items-center justify-between px-5 py-3 text-gray-700 border-b"
             >
@@ -80,6 +83,7 @@ function register() {
                 </span>
 
                 <input
+                  v-model="category.name"
                   type="text"
                   class="w-full px-12 py-2 border-transparent rounded-md appearance-none focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                 >

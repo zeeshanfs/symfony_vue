@@ -17,7 +17,13 @@ class Products
     private ?string $name = null;
 
     #[ORM\Column(length: 255)]
-    private ?string $price = null;
+    private ?string $image = null;
+
+    #[ORM\Column(length: 100)]
+    private ?int $price = null;
+
+    #[ORM\Column(length: 100)]
+    private ?int $category = null;
 
     public function getId(): ?int
     {
@@ -36,14 +42,38 @@ class Products
         return $this;
     }
 
-    public function getPrice(): ?string
+    public function getImage(): ?string
+    {
+        return $this->image;
+    }
+
+    public function setimage(string $image): static
+    {
+        $this->image = $image;
+
+        return $this;
+    }
+
+    public function getPrice(): ?int
     {
         return $this->price;
     }
 
-    public function setPrice(string $price): static
+    public function setPrice(int $price): static
     {
         $this->price = $price;
+
+        return $this;
+    }
+
+    public function getCategory(): ?int
+    {
+        return $this->category;
+    }
+
+    public function setCategory(int $category): static
+    {
+        $this->category = $category;
 
         return $this;
     }

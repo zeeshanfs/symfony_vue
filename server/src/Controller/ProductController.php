@@ -36,7 +36,9 @@ class ProductController extends AbstractController
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
+                'image' => $product->getImage(),
                 'price' => $product->getPrice(),
+                'category' => $product->getCategory(),
             ];
         }
 
@@ -50,8 +52,9 @@ class ProductController extends AbstractController
 
         $product = new Products();
         $product->setName($data['name']);
-        $product->setPrice($data['price']);
-        //$product->setDescription($data['description']);
+        $product->setimage($data['Image']);
+        $product->setprice($data['price']);
+        $product->setCategory($data['category']);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
