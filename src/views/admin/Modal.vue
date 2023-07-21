@@ -1,24 +1,31 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref  } from 'vue'
+import axios from 'axios'
 
 interface Product {
-  product_name: string
-  product_img: string
-  product_category: string
-  product_price: string
+  name: string
+  img: string
+  category: string
+  price: string
 }
 
 const product = ref<Product>({
-  product_name: '',
-  product_img: '',
-  product_category: '',
-  product_price: '',
+  name: '',
+  img: '',
+  category: '',
+  price: '',
 })
 
 function submit() {
-  const data = JSON.parse(JSON.stringify(product.value))
-  // eslint-disable-next-line no-console
-  console.log('Data Submitted: ', data)
+  const dataToSend = JSON.stringify(product.value);
+
+const response =  axios.post('http://localhost:8000/api/products', dataToSend);
+    try {
+        console.log(response);
+      } catch (error) {
+        console.error('Error making POST request:', error);
+      }
+  console.log('Data Submitted: ', dataToSend);
 }
 
 const open = ref(false)
@@ -93,7 +100,7 @@ const open = ref(false)
               <div>
                 <label class="text-gray-700" for="productName">Name</label>
                 <input
-                  v-model="product.product_name"
+                  v-model="product.name"
                   class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                   type="text"
                 >
@@ -102,7 +109,7 @@ const open = ref(false)
               <div>
                 <label class="text-gray-700" for="productImg">Image</label>
                 <input
-                  v-model="product.product_img"
+                  v-model="product.img"
                   class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                 >
               </div>
@@ -122,7 +129,7 @@ const open = ref(false)
               <div>
                 <label class="text-gray-700" for="productPrice">Price</label>
                 <input
-                  v-model="product.product_price"
+                  v-model="product.price"
                   class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                   type="number"
                 >

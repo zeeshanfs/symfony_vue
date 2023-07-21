@@ -2,7 +2,7 @@
 
 namespace App\Controller;
 
-use App\Entity\Product;
+use App\Entity\Products;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -19,10 +19,17 @@ class ProductController extends AbstractController
         $this->entityManager = $entityManager;
     }
 
+    #[Route('/')]
+    public function index()
+    {
+        return new JsonResponse(['message' => 'test api url']);
+        
+    }
+
     #[Route('/api/products',  methods:['GET'])]
     public function getProducts(): JsonResponse
     {
-        $products = $this->entityManager->getRepository(Product::class)->findAll();
+        $products = $this->entityManager->getRepository(Products::class)->findAll();
 
         $data = [];
         foreach ($products as $product) {
@@ -30,7 +37,6 @@ class ProductController extends AbstractController
                 'id' => $product->getId(),
                 'name' => $product->getName(),
                 'price' => $product->getPrice(),
-                'description' => $product->getDescription(),
             ];
         }
 
@@ -42,10 +48,10 @@ class ProductController extends AbstractController
     {
         $data = json_decode($request->getContent(), true);
 
-        $product = new Product();
+        $product = new Products();
         $product->setName($data['name']);
         $product->setPrice($data['price']);
-        $product->setDescription($data['description']);
+        //$product->setDescription($data['description']);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();
