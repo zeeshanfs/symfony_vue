@@ -1,18 +1,22 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import Modal from './Modal.vue';
 
 const products = ref([
-  { id: 1, name: '', price: null, category: null }
+  { id: 1, name: '', image: '', price: null, category: null }
 ]);
 
-fetch('http://localhost:8000/api/products')
+const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
+if (!globalAPI) {
+  throw new Error('globalAPI is not provided.');
+}
+
+fetch(`${globalAPI.baseURL}api/products`)
     .then(response => response.json())
     .then(data => products.value = data);
 
-    console.log(products)
+const open = ref(false)
 
-  const open = ref(false)
 </script>
 
 <template>
@@ -110,11 +114,11 @@ fetch('http://localhost:8000/api/products')
 
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                   <div class="flex items-center">
-                    <div class="flex-shrink-0 w-10 h-10">
+                    <div class="flex-shrink-0 w-12 h-12">
                       <img
-                        class="w-10 h-10"
-                        src="https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?ixlib=rb-1.2.1&ixid=eyJhcHBfaWQiOjEyMDd9&auto=format&fit=facearea&facepad=2&w=256&h=256&q=80"
-                        alt=""
+                        class="w-12 h-12"
+                        :src="`${globalAPI.baseURL}uploads/${item.image}`"
+                        :alt="`${item.image}`"
                       >
                     </div>
                   </div>

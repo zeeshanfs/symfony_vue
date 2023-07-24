@@ -1,32 +1,68 @@
 <script setup lang="ts">
-import { ref  } from 'vue'
+import { ref, inject  } from 'vue'
 import axios from 'axios'
 
 interface Product {
   name: string
-  image: string
   category: string
   price: string
 }
 
 const product = ref<Product>({
   name: '',
-  image: '',
   category: '',
-  price: '',
+  price: ''
 })
+
+let fileData: File | null = null;
 
 const open = ref(false)
 
-function submit() {
-  const dataToSend = JSON.stringify(product.value);
+const Category_list = ref([
+  { id: 1, name: '' }
+]);
 
-  axios.post('http://localhost:8000/api/products', dataToSend);
+const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
+if (!globalAPI) {
+  throw new Error('globalAPI is not provided.');
+}
+
+fetch(`${globalAPI.baseURL}api/category`)
+    .then(response => response.json())
+    .then(data => Category_list.value = data);
+
+function submit() {
+  if (!fileData) {
+    return; 
+  }
+  if (!globalAPI) {
+    throw new Error('globalAPI is not provided.');
+  }
+  const dataToSend = new FormData();
+  dataToSend.append('name',  product.value.name );
+  dataToSend.append('category',  product.value.category );
+  dataToSend.append('price',  product.value.price );
+  dataToSend.append('image', fileData);
+
+  axios.post(`${globalAPI.baseURL}api/products`, dataToSend,
+  {
+    headers: {
+      'Content-Type': 'multipart/form-data',
+    }
+  });
     try {
         console.log('Data Submitted: ', dataToSend);
       } catch (error) {
         console.error('Error making POST request:', error);
       }   
+}
+
+function uploadFile(event : Event) { 
+    const fileInput = event.target as HTMLInputElement;
+    const files = fileInput.files;
+    if (files && files.length > 0) { 
+      fileData = files[0]
+    } 
 }
 
 </script>
@@ -104,25 +140,23 @@ function submit() {
                   type="text"
                 >
               </div>
-
               <div>
                 <label class="text-gray-700" for="productImg">Image</label>
-                <input
-                  v-model="product.image"
-                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                >
+                <input 
+                type="file" 
+                @change="uploadFile"
+                ref="fileInput"
+                accept="image/*"
+                class="w-full mt-2 border-gray-200 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
               </div>
-
+              
               <div>
                 <label class="text-gray-700" for="productCategory">Category</label>
                 <select
                 v-model="product.category"
-                class="block w-full h-full px-4 py-2 pr-8 leading-tight text-gray-700 bg-white border border-gray-400 rounded-l appearance-none focus:outline-none focus:bg-white focus:border-gray-500"
+                class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
               >
-                <option value="1">Books</option>
-                <option value="2">Movies</option>
-                <option value="3">Food</option>
-                <option value="4">Veichles</option>
+              <option v-for="item in Category_list" :value="item.id">{{item.name}}</option>
               </select>
               </div>
 

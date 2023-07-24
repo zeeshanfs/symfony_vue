@@ -1,16 +1,18 @@
 <script setup lang="ts">
-import { ref } from 'vue'
-import Modal from './Modal.vue';
+import { ref, inject } from 'vue'
 
 const products = ref([
-  { id: 1, name: '' }
+  { id: 1, name: '', image: '', price: null, category: null }
 ]);
 
-fetch('http://localhost:8000/api/products')
+const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
+if (!globalAPI) {
+  throw new Error('globalAPI is not provided.');
+}
+
+fetch(`${globalAPI.baseURL}api/products`)
     .then(response => response.json())
     .then(data => products.value = data);
-
-    console.log(products)
 
   const open = ref(false)
 </script>
@@ -23,8 +25,8 @@ fetch('http://localhost:8000/api/products')
       <div class="max-w-sm mt-6 overflow-hidden bg-white rounded shadow-lg">
         <img
           class="w-full"
-          src="/images/1016-384x234.jpg"
-          alt="Sunset in the mountains"
+          :src="`${globalAPI.baseURL}uploads/${item.image}`"
+          :alt="`${item.image}`"
         >
         <div class="px-6 py-4">
           <div class="mb-2 text-xl font-bold text-gray-900">

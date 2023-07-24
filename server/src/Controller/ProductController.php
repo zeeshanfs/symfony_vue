@@ -47,13 +47,21 @@ class ProductController extends AbstractController
     #[Route('/api/products', methods:['POST'])]
     public function saveProduct(Request $request): JsonResponse
     {
-        $data = json_decode($request->getContent(), true);
+        // Get the uploaded file
+        $file = $request->files->get('image');
 
+        // Generate a unique filename
+        $filename = md5(uniqid()) . '.' . $file->guessExtension();
+
+        // Save data to DB
         $product = new Products();
-        $product->setName($data['name']);
-        $product->setimage($data['image']);
-        $product->setprice($data['price']);
-        $product->setCategory($data['category']);
+        $product->setName($request->request->get('name'));
+        $product->setimage($filename);
+        $product->setprice($request->request->get('price'));
+        $product->setCategory($request->request->get('category'));
+
+        // Move the file to the desired directory
+        $file->move($this->getParameter('upload_directory'),$filename);
 
         $this->entityManager->persist($product);
         $this->entityManager->flush();

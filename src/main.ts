@@ -13,5 +13,13 @@ app.component('DefaultLayout', DashboardLayout)
 app.component('EmptyLayout', EmptyLayout)
 app.component('PageLayout', PageLayout)
 
+// Set the global API variable
+const globalAPI = {
+    baseURL: 'http://localhost:8000/'
+};
+  
+// Provide the globalAPI to all components
+app.provide('globalAPI', globalAPI);
+
 app.use(router)
 app.mount('#app')

@@ -1,5 +1,5 @@
 <script setup lang="ts">
-import { ref } from 'vue'
+import { ref, inject } from 'vue'
 import axios from 'axios'
 
 interface Category {
@@ -14,13 +14,21 @@ const Category_list = ref([
   { id: 1, name: '' }
 ]);
 
-fetch('http://localhost:8000/api/category')
+const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
+if (!globalAPI) {
+  throw new Error('globalAPI is not provided.');
+}
+
+fetch(`${globalAPI.baseURL}api/category`)
     .then(response => response.json())
     .then(data => Category_list.value = data);
 
 function submit() {
+  if (!globalAPI) {
+    throw new Error('globalAPI is not provided.');
+  } 
   const dataToSend = JSON.parse(JSON.stringify(category.value))
-  axios.post('http://localhost:8000/api/category', dataToSend);
+  axios.post(`${globalAPI.baseURL}api/category`, dataToSend);
     try {
       console.log('Data Submitted: ', dataToSend);
       } catch (error) {
