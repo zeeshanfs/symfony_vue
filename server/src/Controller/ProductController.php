@@ -22,8 +22,7 @@ class ProductController extends AbstractController
     #[Route('/')]
     public function index()
     {
-        return new JsonResponse(['message' => 'test api url']);
-        
+        return new JsonResponse(['message' => 'test api url']); 
     }
 
     #[Route('/api/products',  methods:['GET'])]
@@ -52,7 +51,7 @@ class ProductController extends AbstractController
 
         $product = new Products();
         $product->setName($data['name']);
-        $product->setimage($data['Image']);
+        $product->setimage($data['image']);
         $product->setprice($data['price']);
         $product->setCategory($data['category']);
 

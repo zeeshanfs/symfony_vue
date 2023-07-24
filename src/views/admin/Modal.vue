@@ -4,33 +4,32 @@ import axios from 'axios'
 
 interface Product {
   name: string
-  img: string
+  image: string
   category: string
   price: string
 }
 
 const product = ref<Product>({
   name: '',
-  img: '',
+  image: '',
   category: '',
   price: '',
 })
 
+const open = ref(false)
+
 function submit() {
   const dataToSend = JSON.stringify(product.value);
 
-const response =  axios.post('http://localhost:8000/api/products', dataToSend);
+  axios.post('http://localhost:8000/api/products', dataToSend);
     try {
-        console.log(response);
+        console.log('Data Submitted: ', dataToSend);
       } catch (error) {
         console.error('Error making POST request:', error);
-      }
-  console.log('Data Submitted: ', dataToSend);
+      }   
 }
 
-const open = ref(false)
 </script>
-
 <template>
   <div>
     <button
@@ -109,7 +108,7 @@ const open = ref(false)
               <div>
                 <label class="text-gray-700" for="productImg">Image</label>
                 <input
-                  v-model="product.img"
+                  v-model="product.image"
                   class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
                 >
               </div>
@@ -117,12 +116,13 @@ const open = ref(false)
               <div>
                 <label class="text-gray-700" for="productCategory">Category</label>
                 <select
+                v-model="product.category"
                 class="block w-full h-full px-4 py-2 pr-8 leading-tight text-gray-700 bg-white border border-gray-400 rounded-l appearance-none focus:outline-none focus:bg-white focus:border-gray-500"
               >
-                <option>Books</option>
-                <option>Movies</option>
-                <option>Food</option>
-                <option>Veichles</option>
+                <option value="1">Books</option>
+                <option value="2">Movies</option>
+                <option value="3">Food</option>
+                <option value="4">Veichles</option>
               </select>
               </div>
 
@@ -144,6 +144,7 @@ const open = ref(false)
                 Close
               </button>
               <button
+              @click="open = false"
                 class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
               >
                 Save
