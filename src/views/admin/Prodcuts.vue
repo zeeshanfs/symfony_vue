@@ -3,7 +3,7 @@ import { ref } from 'vue'
 import Modal from './Modal.vue';
 
 const products = ref([
-  { id: 1, name: '' }
+  { id: 1, name: '', price: null, category: null }
 ]);
 
 fetch('http://localhost:8000/api/products')
@@ -21,7 +21,6 @@ fetch('http://localhost:8000/api/products')
       Prodcuts
     </h3>
     
-
     <div class="mt-4 dashboard ">
       <div class="flex flex-wrap -mx-6">
         <div class="w-full px-6 mt-6 xl:mt-0">
@@ -105,7 +104,7 @@ fetch('http://localhost:8000/api/products')
 
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                   <div class="text-sm leading-5 text-gray-900">
-                    {{ item.id }}
+                    {{ item.name }}
                   </div>
                 </td>
 
@@ -126,13 +125,13 @@ fetch('http://localhost:8000/api/products')
                 >
                   <span
                     class="inline-flex px-2 text-xs font-semibold leading-5 text-green-800 bg-green-100 rounded-full"
-                  >{{ item.name }}</span>
+                  >{{ item.price }}</span>
                 </td>
 
                 <td
                   class="px-6 py-4 text-sm leading-5 text-gray-500 border-b border-gray-200 whitespace-nowrap"
                 >
-                  {{ item.name }}
+                  {{ item.category }}
                 </td>
 
                 <td
@@ -140,13 +139,6 @@ fetch('http://localhost:8000/api/products')
                 >
                   <a href="#" @click="open = true" class="text-indigo-600 hover:text-indigo-900">Edit</a>
 
-
-                  <!-- <button
-      class="px-6 py-3 mt-3 font-medium tracking-wide text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
-      @click="open = true"
-    >
-      Add Product
-    </button> -->
                 </td>
               </tr>
             </tbody>

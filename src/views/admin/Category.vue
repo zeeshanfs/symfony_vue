@@ -10,9 +10,13 @@ const category = ref<Category>({
   name: ''
 })
 
+const Category_list = ref([
+  { id: 1, name: '' }
+]);
+
 fetch('http://localhost:8000/api/category')
     .then(response => response.json())
-    .then(data => category.value = data);
+    .then(data => Category_list.value = data);
 
 function submit() {
   const dataToSend = JSON.parse(JSON.stringify(category.value))
@@ -26,12 +30,12 @@ function submit() {
 </script>
 
 <template>
-  <div>
-    <h3 class="text-3xl font-semibold text-gray-700">
+  <h3 class="text-3xl font-semibold text-gray-700">
      Add Category
     </h3>
-
-    <div class="mt-4">
+  <div class="grid grid-cols-12 gap-6">
+    
+    <div class="mt-4 mb-3 sm:col-span-6 xl:col-span-4">
       <div class="mt-4">
         <div
           class="w-full max-w-sm overflow-hidden bg-white border rounded-md shadow-md"
@@ -103,6 +107,42 @@ function submit() {
               </button>
             </div>
           </form>
+        </div>
+      </div>
+    </div>
+
+    <div class="mt-4 mb-3 sm:col-span-6 xl:col-span-8">
+      <div class="mt-6">
+        <div class="my-6 overflow-hidden bg-white rounded-md shadow">
+          <table class="w-full text-left border-collapse">
+            <thead class="border-b">
+              <tr>
+                <th
+                  class="px-5 py-3 text-sm font-medium text-gray-100 uppercase bg-indigo-800"
+                >
+                  ID
+                </th>
+                <th
+                  class="px-5 py-3 text-sm font-medium text-gray-100 uppercase bg-indigo-800"
+                >
+                  Name
+                </th>
+              </tr>
+            </thead>
+            <tbody>
+              <tr
+                v-for="(item, index) in Category_list"
+                :key="index"
+              >
+                <td class="px-6 py-4 text-lg text-gray-700 border-b">
+                  {{ item.id }}
+                </td>
+                <td class="px-6 py-4 text-gray-500 border-b">
+                  {{ item.name }}
+                </td>
+              </tr>
+            </tbody>
+          </table>
         </div>
       </div>
     </div>
