@@ -14,7 +14,13 @@ const products = ref([
 ]);
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI')
-const open = ref(false)
+const valueModal = ref(false)
+const prodcutId = ref()
+
+function openModal(id: number){
+  prodcutId.value = id
+  valueModal.value = !valueModal.value;
+}
 
 function getData_prodcuts(){
   fetch(`${globalAPI!.baseURL}api/products`)
@@ -71,7 +77,7 @@ getData_prodcuts()
         </div>
       </div>
       <div>
-        <Modal :open=true />
+        <Modal :props="{ openModal: valueModal, prodcutId: prodcutId }" />
       </div>
     </div>
 
@@ -145,7 +151,7 @@ getData_prodcuts()
                 <td
                   class="px-6 py-4 text-sm font-medium leading-5 text-right border-b border-gray-200 whitespace-nowrap"
                 >
-                  <a href="#" @click="open = true" class="text-indigo-600 hover:text-indigo-900">Edit</a>
+                  <a href="#" @click="openModal(item.id)" class="text-indigo-600 hover:text-indigo-900">Edit</a>
                 </td>
               </tr>
             </tbody>

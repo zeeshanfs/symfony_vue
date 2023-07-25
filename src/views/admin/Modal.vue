@@ -1,12 +1,12 @@
 <script setup lang="ts">
-import { ref, inject  } from 'vue'
+import { ref, inject, watch   } from 'vue'
 import axios from 'axios'
 
 interface Product {
   name: string
   category: string
   price: string,
-  description: String
+  description: string
 }
 
 const product = ref<Product>({
@@ -20,9 +20,28 @@ let fileData: File | null = null;
 let DescData = '';
 
 const open = ref(false)
+const props = defineProps(['props'])
+
+watch(
+  () => props.props.openModal,
+  value => {
+    open.value = !open.value
+    getData_prodcut(props.props.prodcutId)
+  },
+);
+
+function openModal(){
+  open.value = !open.value
+  product.value = {
+    name: "",
+    category: "",
+    price: "",
+    description: "",
+  }
+}
 
 const Category_list = ref([
-  { id: 1, name: '' }
+  { id: 0, name: '' }
 ]);
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
@@ -31,9 +50,14 @@ function getData_category(){
   fetch(`${globalAPI!.baseURL}api/category`)
       .then(response => response.json())
       .then(data => Category_list.value = data);
-
 }
 getData_category()
+
+function getData_prodcut(id: number){
+  fetch(`${globalAPI!.baseURL}api/products/${id}`)
+    .then(response => response.json())
+    .then(data => product.value = data);
+}
 
 function submit() {
   const dataToSend = new FormData();
@@ -69,7 +93,7 @@ function updateMessage(event: Event) {
   <div>
     <button
       class="px-6 py-3 mt-3 font-medium tracking-wide text-white bg-indigo-600 rounded-md hover:bg-indigo-500 focus:outline-none"
-      @click="open = true"
+      @click="openModal"
     >
       Add Product
     </button>
@@ -87,23 +111,6 @@ function updateMessage(event: Event) {
       <div
         class="z-50 w-11/12 mx-auto overflow-y-auto bg-white rounded shadow-lg modal-container lg:max-w-lg"
       >
-        <div
-          class="absolute top-0 right-0 z-50 flex flex-col items-center mt-4 mr-4 text-sm text-white cursor-pointer modal-close"
-        >
-          <svg
-            class="text-white fill-current"
-            xmlns="http://www.w3.org/2000/svg"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-          >
-            <path
-              d="M14.53 4.53l-1.06-1.06L9 7.94 4.53 3.47 3.47 4.53 7.94 9l-4.47 4.47 1.06 1.06L9 10.06l4.47 4.47 1.06-1.06L10.06 9z"
-            />
-          </svg>
-          <span class="text-sm">(Esc)</span>
-        </div>
-
         <!-- Add margin if you want to see some of the overlay behind the modal -->
         <div class="px-6 py-4 text-left modal-content">
           <!-- Title -->
@@ -176,6 +183,7 @@ function updateMessage(event: Event) {
                   class="description w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
                   rows="4" 
                   cols="50"
+                  :value="product.description"
                   >
                 </textarea>
               </div>

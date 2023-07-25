@@ -47,6 +47,23 @@ class ProductController extends AbstractController
         return new JsonResponse($data);
     }
 
+    #[Route('/api/products/{id}',  methods:['GET'])]
+    public function getProductById($id): JsonResponse
+    {
+        $product = $this->entityManager->getRepository(Products::class)->find(1);
+        $category = $this->entityManager->getRepository(Categories::class)->find($product->getId())->getName();
+        $data = [
+            'id' => $product->getId(),
+            'name' => $product->getName(),
+            'image' => $product->getImage(),
+            'price' => $product->getPrice(),
+            'category' => $category,
+            'description' => $product->getDescription()
+        ];
+
+        return new JsonResponse($data);
+    }
+
     #[Route('/api/products', methods:['POST'])]
     public function saveProduct(Request $request): JsonResponse
     {
