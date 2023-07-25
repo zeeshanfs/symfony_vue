@@ -3,6 +3,7 @@
 namespace App\Controller;
 
 use App\Entity\Products;
+use App\Entity\Categories;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
@@ -32,12 +33,14 @@ class ProductController extends AbstractController
 
         $data = [];
         foreach ($products as $product) {
+            $category = $this->entityManager->getRepository(Categories::class)->find($product->getId())->getName();
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
                 'image' => $product->getImage(),
                 'price' => $product->getPrice(),
-                'category' => $product->getCategory(),
+                'category' => $category,
+                'description' => $product->getDescription()
             ];
         }
 
@@ -59,6 +62,7 @@ class ProductController extends AbstractController
         $product->setimage($filename);
         $product->setprice($request->request->get('price'));
         $product->setCategory($request->request->get('category'));
+        $product->setDescription($request->request->get('description'));
 
         // Move the file to the desired directory
         $file->move($this->getParameter('upload_directory'),$filename);

@@ -5,16 +5,19 @@ import axios from 'axios'
 interface Product {
   name: string
   category: string
-  price: string
+  price: string,
+  description: String
 }
 
 const product = ref<Product>({
   name: '',
   category: '',
-  price: ''
+  price: '',
+  description: ''
 })
 
 let fileData: File | null = null;
+let DescData = '';
 
 const open = ref(false)
 
@@ -23,46 +26,42 @@ const Category_list = ref([
 ]);
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
-if (!globalAPI) {
-  throw new Error('globalAPI is not provided.');
-}
 
-fetch(`${globalAPI.baseURL}api/category`)
-    .then(response => response.json())
-    .then(data => Category_list.value = data);
+function getData_category(){
+  fetch(`${globalAPI!.baseURL}api/category`)
+      .then(response => response.json())
+      .then(data => Category_list.value = data);
+
+}
+getData_category()
 
 function submit() {
-  if (!fileData) {
-    return; 
-  }
-  if (!globalAPI) {
-    throw new Error('globalAPI is not provided.');
-  }
   const dataToSend = new FormData();
   dataToSend.append('name',  product.value.name );
   dataToSend.append('category',  product.value.category );
   dataToSend.append('price',  product.value.price );
-  dataToSend.append('image', fileData);
+  dataToSend.append('description', DescData);
+  dataToSend.append('image', fileData!);
 
-  axios.post(`${globalAPI.baseURL}api/products`, dataToSend,
-  {
+
+  axios.post(`${globalAPI!.baseURL}api/products`, dataToSend,{
     headers: {
       'Content-Type': 'multipart/form-data',
     }
-  });
-    try {
-        console.log('Data Submitted: ', dataToSend);
-      } catch (error) {
-        console.error('Error making POST request:', error);
-      }   
+  })
 }
 
-function uploadFile(event : Event) { 
+function uploadFile(event: Event) { 
     const fileInput = event.target as HTMLInputElement;
     const files = fileInput.files;
     if (files && files.length > 0) { 
       fileData = files[0]
     } 
+}
+
+function updateMessage(event: Event) {
+    const DescInput = event.target as HTMLInputElement;
+    DescData = DescInput.value; 
 }
 
 </script>
@@ -170,6 +169,17 @@ function uploadFile(event : Event) {
               </div>
             </div>
 
+            <div>
+                <label class="text-gray-700" for="productCategory">Description</label>
+                <textarea  
+                  @input="updateMessage"
+                  class="description w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
+                  rows="4" 
+                  cols="50"
+                  >
+                </textarea>
+              </div>
+
             <div class="flex justify-end mt-4">
               <button
                 class="p-3 px-6 py-3 mr-2 text-indigo-500 bg-transparent rounded-lg hover:bg-gray-100 hover:text-indigo-400 focus:outline-none"
@@ -196,5 +206,8 @@ function uploadFile(event : Event) {
 <style>
 .modal {
   transition: opacity 0.25s ease;
+}
+.description{
+  height: 140px;;
 }
 </style>

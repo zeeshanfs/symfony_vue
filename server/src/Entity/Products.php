@@ -25,6 +25,9 @@ class Products
     #[ORM\Column(length: 100)]
     private ?int $category = null;
 
+    #[ORM\Column(type:"text", nullable:true)]
+    private ?string $description = null;
+
     public function getId(): ?int
     {
         return $this->id;
@@ -74,6 +77,18 @@ class Products
     public function setCategory(int $category): static
     {
         $this->category = $category;
+
+        return $this;
+    }
+
+    public function getDescription(): ?string
+    {
+        return $this->description;
+    }
+
+    public function setDescription(string $description): static
+    {
+        $this->description = $description;
 
         return $this;
     }

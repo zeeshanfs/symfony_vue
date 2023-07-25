@@ -3,19 +3,25 @@ import { ref, inject } from 'vue'
 import Modal from './Modal.vue';
 
 const products = ref([
-  { id: 1, name: '', image: '', price: null, category: null }
+  { 
+    id: 1, 
+    name: '', 
+    image: '', 
+    price: null, 
+    category: null,
+    description: '' 
+  }
 ]);
 
-const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
-if (!globalAPI) {
-  throw new Error('globalAPI is not provided.');
-}
+const globalAPI: { baseURL: string; } | undefined = inject('globalAPI')
+const open = ref(false)
 
-fetch(`${globalAPI.baseURL}api/products`)
+function getData_prodcuts(){
+  fetch(`${globalAPI!.baseURL}api/products`)
     .then(response => response.json())
     .then(data => products.value = data);
-
-const open = ref(false)
+}
+getData_prodcuts()
 
 </script>
 
@@ -117,13 +123,12 @@ const open = ref(false)
                     <div class="flex-shrink-0 w-12 h-12">
                       <img
                         class="w-12 h-12"
-                        :src="`${globalAPI.baseURL}uploads/${item.image}`"
+                        :src="`${globalAPI!.baseURL}uploads/${item.image}`"
                         :alt="`${item.image}`"
                       >
                     </div>
                   </div>
                 </td>
-
                 <td
                   class="px-6 py-4 border-b border-gray-200 whitespace-nowrap"
                 >
@@ -137,12 +142,10 @@ const open = ref(false)
                 >
                   {{ item.category }}
                 </td>
-
                 <td
                   class="px-6 py-4 text-sm font-medium leading-5 text-right border-b border-gray-200 whitespace-nowrap"
                 >
                   <a href="#" @click="open = true" class="text-indigo-600 hover:text-indigo-900">Edit</a>
-
                 </td>
               </tr>
             </tbody>
