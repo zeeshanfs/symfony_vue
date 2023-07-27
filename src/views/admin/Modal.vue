@@ -21,6 +21,7 @@ let DescData = '';
 
 const open = ref(false)
 const props = defineProps(['props'])
+const isRequired = ref(true);
 
 watch(
   () => props.props.openModal,
@@ -31,6 +32,7 @@ watch(
 );
 
 function openModal(){
+  isRequired.value = false;
   open.value = !open.value
   product.value = {
     name: "",
@@ -54,6 +56,7 @@ function getData_category(){
 getData_category()
 
 function getData_prodcut(id: number){
+  isRequired.value = false;
   fetch(`${globalAPI!.baseURL}api/products/${id}`)
     .then(response => response.json())
     .then(data => product.value = data);
@@ -61,12 +64,16 @@ function getData_prodcut(id: number){
 
 function submit() {
   const dataToSend = new FormData();
+  if(product.value.name == "" || product.value.category == "" || product.value.price == ""){
+    isRequired.value = true;
+    return false;
+  }
+  open.value = !open.value
   dataToSend.append('name',  product.value.name );
   dataToSend.append('category',  product.value.category );
   dataToSend.append('price',  product.value.price );
   dataToSend.append('description', DescData);
   dataToSend.append('image', fileData!);
-
 
   axios.post(`${globalAPI!.baseURL}api/products`, dataToSend,{
     headers: {
@@ -134,77 +141,81 @@ function updateMessage(event: Event) {
           </div>
 
           <!-- Body -->
-          <div class="mt-4">
-        <div class="p-6 bg-white rounded-md">
-          <form @submit.prevent="submit">
-            <div class="grid grid-cols-1 gap-6 mt-4 sm:grid-cols-2">
-              <div>
-                <label class="text-gray-700" for="productName">Name</label>
-                <input
-                  v-model="product.name"
-                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                  type="text"
-                >
-              </div>
-              <div>
-                <label class="text-gray-700" for="productImg">Image</label>
-                <input 
-                type="file" 
-                @change="uploadFile"
-                ref="fileInput"
-                accept="image/*"
-                class="w-full mt-2 border-gray-200 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500">
-              </div>
-              
-              <div>
-                <label class="text-gray-700" for="productCategory">Category</label>
-                <select
-                v-model="product.category"
-                class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-              >
-              <option v-for="item in Category_list" :value="item.id">{{item.name}}</option>
-              </select>
-              </div>
-
-              <div>
-                <label class="text-gray-700" for="productPrice">Price</label>
-                <input
-                  v-model="product.price"
-                  class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
-                  type="number"
-                >
-              </div>
-            </div>
-
-            <div>
-                <label class="text-gray-700" for="productCategory">Description</label>
-                <textarea  
-                  @input="updateMessage"
-                  class="description w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
-                  rows="4" 
-                  cols="50"
-                  :value="product.description"
+          <div class="bg-white rounded-md">
+            <form @submit.prevent="">
+              <div class="grid grid-cols-1 gap-6 sm:grid-cols-2">
+                <div>
+                  <label class="text-gray-700" for="productName">Name</label>
+                  <input
+                    :required="isRequired" 
+                    v-model="product.name"
+                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                    type="text"
                   >
-                </textarea>
+                </div>
+                <div>
+                  <label class="text-gray-700" for="productImg">Image</label>
+                  <input
+                    :required="isRequired" 
+                    type="file" 
+                    @change="uploadFile"
+                    ref="fileInput"
+                    accept="image/*"
+                    class="w-full mt-2 border-gray-200 focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  >
+                </div>
+                
+                <div>
+                  <label class="text-gray-700" for="productCategory">Category</label>
+                  <select
+                    :required="isRequired" 
+                    v-model="product.category"
+                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                  >
+                <option>Select Category</option>
+                <option v-for="item in Category_list" :value="item.id" >{{item.name}}</option>
+                </select>
+                </div>
+
+                <div>
+                  <label class="text-gray-700" for="productPrice">Price</label>
+                  <input
+                    :required="isRequired" 
+                    v-model="product.price"
+                    class="w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500"
+                    type="number"
+                  >
+                </div>
               </div>
 
-            <div class="flex justify-end mt-4">
-              <button
-                class="p-3 px-6 py-3 mr-2 text-indigo-500 bg-transparent rounded-lg hover:bg-gray-100 hover:text-indigo-400 focus:outline-none"
-                @click="open = false"
-              >
-                Close
-              </button>
-              <button
-              @click="open = false"
-                class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
-              >
-                Save
-              </button>
-            </div>
-          </form>
-        </div>
-      </div>
+              <div class="mt-4">
+                  <label class="text-gray-700" for="productCategory">Description</label>
+                  <textarea
+                    @input="updateMessage"
+                    class="description w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
+                    rows="4" 
+                    cols="50"
+                    :value="product.description"
+                    >
+                  </textarea>
+              </div>
+
+              <div class="flex justify-end mt-4">
+                <button
+                  class="p-3 px-6 py-3 mr-2 text-indigo-500 bg-transparent rounded-lg hover:bg-gray-100 hover:text-indigo-400 focus:outline-none"
+                  @click="open = false"
+                >
+                  Close
+                </button>
+                <button
+                  @click="submit"
+                  class="px-4 py-2 text-gray-200 bg-gray-800 rounded-md hover:bg-gray-700 focus:outline-none focus:bg-gray-700"
+                >
+                  Save
+                </button>
+              </div>
+            </form>
+          </div>
         </div>
       </div>
     </div>

@@ -5,6 +5,7 @@ namespace App\Controller;
 use App\Entity\Products;
 use App\Entity\Categories;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\ApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -14,16 +15,19 @@ use Doctrine\ORM\EntityManagerInterface;
 class ProductController extends AbstractController
 {
     private $entityManager;
+    private $apiManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->apiManager = new ApiController();
     }
 
     #[Route('/')]
+    #[Route('/api')]
     public function index()
     {
-        return new JsonResponse(['message' => 'test api url']); 
+        return $this->apiManager->respond(['message' => 'Test Api Call']);
     }
 
     #[Route('/api/products',  methods:['GET'])]
@@ -33,7 +37,7 @@ class ProductController extends AbstractController
 
         $data = [];
         foreach ($products as $product) {
-            $category = $this->entityManager->getRepository(Categories::class)->find($product->getId())->getName();
+            $category = $this->entityManager->getRepository(Categories::class)->find($product->getCategory())->getName();
             $data[] = [
                 'id' => $product->getId(),
                 'name' => $product->getName(),
@@ -44,24 +48,25 @@ class ProductController extends AbstractController
             ];
         }
 
-        return new JsonResponse($data);
+        return $this->apiManager->respond($data);
     }
 
     #[Route('/api/products/{id}',  methods:['GET'])]
     public function getProductById($id): JsonResponse
     {
-        $product = $this->entityManager->getRepository(Products::class)->find(1);
-        $category = $this->entityManager->getRepository(Categories::class)->find($product->getId())->getName();
+        $product = $this->entityManager->getRepository(Products::class)->find($id);
+        $categoryName = $this->entityManager->getRepository(Categories::class)->find($product->getCategory())->getName();
         $data = [
             'id' => $product->getId(),
             'name' => $product->getName(),
             'image' => $product->getImage(),
             'price' => $product->getPrice(),
-            'category' => $category,
+            'category' => $product->getCategory(),
+            'categoryName' => $categoryName,
             'description' => $product->getDescription()
         ];
 
-        return new JsonResponse($data);
+        return $this->apiManager->respond($data);
     }
 
     #[Route('/api/products', methods:['POST'])]
@@ -87,7 +92,7 @@ class ProductController extends AbstractController
         $this->entityManager->persist($product);
         $this->entityManager->flush();
 
-        return new JsonResponse(['message' => 'Product saved successfully'], Response::HTTP_CREATED);
+        return $this->apiManager->respond(['message' => 'Product saved successfully']);
     }
 }
 

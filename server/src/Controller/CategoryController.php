@@ -4,6 +4,7 @@ namespace App\Controller;
 
 use App\Entity\Categories;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
+use App\Controller\ApiController;
 use Symfony\Component\HttpFoundation\JsonResponse;
 use Symfony\Component\HttpFoundation\Request;
 use Symfony\Component\HttpFoundation\Response;
@@ -17,6 +18,7 @@ class CategoryController extends AbstractController
     public function __construct(EntityManagerInterface $entityManager)
     {
         $this->entityManager = $entityManager;
+        $this->apiManager = new ApiController();
     }
 
     #[Route('/api/category',  methods:['GET'])]
@@ -32,7 +34,7 @@ class CategoryController extends AbstractController
             ];
         }
 
-        return new JsonResponse($data);
+        return $this->apiManager->respond($data);
     }
 
     #[Route('/api/category', methods:['POST'])]
@@ -46,7 +48,7 @@ class CategoryController extends AbstractController
         $this->entityManager->persist($category);
         $this->entityManager->flush();
 
-        return new JsonResponse(['message' => 'Category saved successfully'], Response::HTTP_CREATED);
+        return $this->apiManager->respond(['message' => 'Category saved successfully']);
     }
 }
 
