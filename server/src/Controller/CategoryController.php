@@ -2,18 +2,17 @@
 
 namespace App\Controller;
 
-use App\Entity\Categories;
 use Symfony\Bundle\FrameworkBundle\Controller\AbstractController;
-use App\Controller\ApiController;
-use Symfony\Component\HttpFoundation\JsonResponse;
-use Symfony\Component\HttpFoundation\Request;
-use Symfony\Component\HttpFoundation\Response;
 use Symfony\Component\Routing\Annotation\Route;
+use Symfony\Component\HttpFoundation\Request;
 use Doctrine\ORM\EntityManagerInterface;
+use App\Controller\ApiController;
+use App\Entity\Categories;
 
 class CategoryController extends AbstractController
 {
     private $entityManager;
+    private $apiManager;
 
     public function __construct(EntityManagerInterface $entityManager)
     {
@@ -22,7 +21,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/category',  methods:['GET'])]
-    public function getCategory(): JsonResponse
+    public function getCategory()
     {
         $categories = $this->entityManager->getRepository(Categories::class)->findAll();
 
@@ -38,7 +37,7 @@ class CategoryController extends AbstractController
     }
 
     #[Route('/api/category', methods:['POST'])]
-    public function savecategory(Request $request): JsonResponse
+    public function savecategory(Request $request)
     {
         $data = json_decode($request->getContent(), true);
 
