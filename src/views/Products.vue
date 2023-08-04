@@ -1,69 +1,61 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed, onMounted } from 'vue'
+import { useStore } from 'vuex'
 
-const products = ref([
-  {
-    id: 1,
-    name: '',
-    image: '',
-    price: null,
-    category: null,
-    description: ''
-  }
-]);
+const store = useStore();
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
-  const currentPage = ref(1)
-  const pageSize = ref(6)
-  let totalPages = ref<number>(1)
-  let totalproducts = ref<number>(0)
+const currentPage = ref(1)
+const itemsPerPage = ref(6); 
 
-  async function getData_prodcuts() {
-    const response = await fetch(`${globalAPI!.baseURL}api/products`);
-    const data = await response.json();
-    totalproducts.value = data.length
-    return data;
-  }
+const fetchUsers = () => {
+  store.dispatch('fetchProducts');
+};
 
-  async function fetchData(page: number, Size: number) {
-    const paginatedData = await getData_prodcuts();
-    if (paginatedData) {
-      const startIndex = (page - 1) * Size;
-      const endIndex = startIndex + Size;
-      totalPages.value = Math.ceil(paginatedData.length / Size);
-      products.value = paginatedData.slice(startIndex, endIndex);
-    }
-  }
+onMounted(() => {
+  fetchUsers(); 
+});
 
-  function previousPage() {
+const productData = computed(() => store.getters.getProducts);
+const totalproducts = computed<number>(() => productData.value?.length);
+
+const totalPages = computed(() => {
+  return Math.ceil((productData.value?.length ?? 0) / itemsPerPage.value);
+});
+
+const paginatedProducts = computed(() => {
+  const startIndex = (currentPage.value - 1) * itemsPerPage.value;
+  const endIndex = startIndex + itemsPerPage.value;
+  return productData.value?.slice(startIndex, endIndex);
+});
+
+const previousPage = () => {
+  if (currentPage.value > 1) {
     currentPage.value--;
-    fetchData(currentPage.value, pageSize.value);
   }
+};
 
-  function nextPage() {
+const nextPage = () => {
+  if (currentPage.value < Math.ceil(productData.value?.length / itemsPerPage.value)) {
     currentPage.value++;
-    fetchData(currentPage.value, pageSize.value);
   }
+};
 
-  function selectPage(Page:number) {
-    currentPage.value = Page;
-    fetchData(Page, pageSize.value);
-  }
+const selectPage = (Page:number) => {
+  currentPage.value = Page;
+}
 
-  function selectlimit(event: Event) {
-    const LimitInput = event.target as HTMLInputElement;
-    const limit = parseFloat(LimitInput.value);
-    pageSize.value = limit
-    fetchData(currentPage.value, pageSize.value);
-  }
+const selectlimit = (event: Event) => {
+  const LimitInput = event.target as HTMLInputElement;
+  const limit = parseFloat(LimitInput.value);
+  itemsPerPage.value = limit 
+}
 
-  fetchData(currentPage.value, pageSize.value);
 </script>
 <template>
   <h3 class="text-3xl font-semibold text-gray-700">
     Prodcuts
   </h3>
-
   <div class="flex flex-col mt-3 sm:flex-row">
     <div class="flex">
       <div class="relative">
@@ -109,7 +101,7 @@ const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
   </div>
 
   <div class="grid grid-cols-12 gap-6">
-    <div class="mt-4 mb-3 sm:col-span-6 xl:col-span-4" v-for="(item, index) in products" :key="index">
+    <div class="mt-4 mb-3 sm:col-span-6 xl:col-span-4" v-for="(item, index) in paginatedProducts" :key="index">
       <div class="mt-6 overflow-hidden bg-white rounded shadow-lg">
         <img
           class="w-full"
@@ -145,11 +137,13 @@ const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
 
           <a v-for="(item) in totalPages" @click="selectPage(item)"
             :class="item ==  currentPage ? 'active' : ''"
-            class="px-3 py-2 leading-tight text-indigo-700 bg-white border border-r-0 border-gray-200 hover:bg-indigo-500 hover:text-white"><span>{{item}}</span></a>
+            class="px-3 py-2 leading-tight text-indigo-700 bg-white border border-r-0 border-gray-200 hover:bg-indigo-500 hover:text-white">
+            <span>{{item}}</span>
+          </a>
 
           <button
             class="px-3 py-2 leading-tight text-indigo-700 bg-white border border-gray-200 rounded-r hover:bg-indigo-500 hover:text-white"
-            @click="nextPage" :disabled="currentPage === totalPages">
+            @click="nextPage">
             Next
           </button>
         </div>

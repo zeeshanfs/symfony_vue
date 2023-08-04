@@ -1,6 +1,6 @@
 <script setup lang="ts">
 import { ref, inject } from 'vue'
-import Modal from './Modal.vue';
+import Modal from './Modal.vue'
 
 const products = ref([
   { 

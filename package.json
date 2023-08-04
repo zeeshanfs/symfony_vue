@@ -17,7 +17,8 @@
     "axios": "^1.4.0",
     "concurrently": "^8.2.0",
     "vue": "^3.3.4",
-    "vue-router": "4.2.2"
+    "vue-router": "4.2.2",
+    "vuex": "^4.0.2"
   },
   "devDependencies": {
     "@antfu/eslint-config": "^0.39.5",
