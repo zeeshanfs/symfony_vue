@@ -1,31 +1,30 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { useStore } from 'vuex'
 
+const store = useStore();
 const category = ref<{ name: string }>({
   name: ''
 });
 
-const Category_list = ref([
-  { id: 1, name: '' }
-]);
+const fetchCategories = () => {
+  store.dispatch('fetchCategories');
+};
+
+onMounted(() => {
+  fetchCategories(); 
+})
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
-
-function getData_category(){
-  fetch(`${globalAPI!.baseURL}api/category`)
-      .then(response => response.json())
-      .then(data => Category_list.value = data);
-}
+const Category_list = computed(() => store.getters.getCategories);
 
 function submit() {
   const dataToSend = JSON.parse(JSON.stringify(category.value))
   axios.post(`${globalAPI!.baseURL}api/category`, dataToSend);
   category.value.name = ""
-  getData_category()
 }
 
-getData_category()
 </script>
 
 <template>
@@ -90,7 +89,7 @@ getData_category()
       </div>
     </div>
 
-    <div class="mt-2 mb-3 sm:col-span-6 xl:col-span-8 category_table">
+    <div class="mt-2 mb-3 sm:col-span-6 xl:col-span-8 h-96 max-h-full overflow-auto">
       <div class="mt-2">
         <div class="my-2 overflow-hidden bg-white rounded-md shadow">
           <table class="w-full text-left border-collapse">
@@ -128,10 +127,3 @@ getData_category()
 
   </div>
 </template>
-<style>
-.category_table{
-    max-height: 398px;
-    overflow: auto;
-}
-</style>
-

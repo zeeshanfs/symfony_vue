@@ -3,17 +3,30 @@ import { ref, inject, computed, onMounted } from 'vue'
 import { useStore } from 'vuex'
 
 const store = useStore();
+interface Product {
+  name: string
+  category: string
+  price: string,
+  description: string
+}
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
 const currentPage = ref(1)
 const itemsPerPage = ref(6); 
+const searchQuery = ref('');
 
-const fetchUsers = () => {
+const fetchProducts = () => {
   store.dispatch('fetchProducts');
 };
 
 onMounted(() => {
-  fetchUsers(); 
+  fetchProducts(); 
+})
+
+const filteredProducts = computed(() => {
+  return productData.value?.filter((product: Product) => {
+    return product.name.includes(searchQuery.value);
+  });
 });
 
 const productData = computed(() => store.getters.getProducts);
@@ -26,7 +39,7 @@ const totalPages = computed(() => {
 const paginatedProducts = computed(() => {
   const startIndex = (currentPage.value - 1) * itemsPerPage.value;
   const endIndex = startIndex + itemsPerPage.value;
-  return productData.value?.slice(startIndex, endIndex);
+  return filteredProducts.value?.slice(startIndex, endIndex);
 });
 
 const previousPage = () => {
@@ -91,11 +104,11 @@ const selectlimit = (event: Event) => {
         </svg>
       </span>
 
-      <input placeholder="Search"
+      <input placeholder="Search" type="text" v-model="searchQuery" 
         class="block w-full py-2 pl-8 pr-6 text-sm text-gray-700 placeholder-gray-400 bg-white border border-b border-gray-400 rounded-l rounded-r appearance-none sm:rounded-l-none focus:bg-white focus:placeholder-gray-600 focus:text-gray-700 focus:outline-none">
     </div>
 
-    <div class="flex total_product">
+    <div class="flex flex-1 flex-col text-right m-auto">
       <span class="text-xs text-gray-900 xs:text-sm">Showing {{currentPage }} to {{ totalPages }} of {{ totalproducts }} Entries</span>
     </div>
   </div>
@@ -136,7 +149,7 @@ const selectlimit = (event: Event) => {
           </button>
 
           <a v-for="(item) in totalPages" @click="selectPage(item)"
-            :class="item ==  currentPage ? 'active' : ''"
+            :class="item ==  currentPage ? 'bg-indigo-500 text-white hover:bg-indigo-600' : ''"
             class="px-3 py-2 leading-tight text-indigo-700 bg-white border border-r-0 border-gray-200 hover:bg-indigo-500 hover:text-white">
             <span>{{item}}</span>
           </a>
@@ -151,15 +164,3 @@ const selectlimit = (event: Event) => {
     </div>
   </div>
 </template>
-<style>
-.active{
-  background-color: rgb(99 102 241 / var(--tw-bg-opacity)) !important;
-}
-.total_product{
-  flex: 1;
-  display: flex;
-  flex-direction: column;
-  margin: auto;
-  text-align: right;
-}
-</style>

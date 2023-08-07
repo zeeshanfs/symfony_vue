@@ -1,6 +1,9 @@
 <script setup lang="ts">
-import { ref, inject, watch   } from 'vue'
+import { ref, inject, watch, computed, onMounted } from 'vue'
 import axios from 'axios'
+import { useStore } from 'vuex'
+
+const store = useStore();
 
 interface Product {
   name: string
@@ -42,18 +45,17 @@ function openModal(){
   }
 }
 
-const Category_list = ref([
-  { id: 0, name: '' }
-]);
+const fetchCategories = () => {
+  store.dispatch('fetchCategories');
+};
+
+onMounted(() => {
+  fetchCategories(); 
+})
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI');
+const Category_list = computed(() => store.getters.getCategories);
 
-function getData_category(){
-  fetch(`${globalAPI!.baseURL}api/category`)
-      .then(response => response.json())
-      .then(data => Category_list.value = data);
-}
-getData_category()
 
 function getData_prodcut(id: number){
   isRequired.value = false;
@@ -192,7 +194,7 @@ function updateMessage(event: Event) {
                   <label class="text-gray-700" for="productCategory">Description</label>
                   <textarea
                     @input="updateMessage"
-                    class="description w-full mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
+                    class="w-full h-40 mt-2 border-gray-200 rounded-md focus:border-indigo-600 focus:ring focus:ring-opacity-40 focus:ring-indigo-500" 
                     rows="4" 
                     cols="50"
                     :value="product.description"
@@ -221,12 +223,3 @@ function updateMessage(event: Event) {
     </div>
   </div>
 </template>
-
-<style>
-.modal {
-  transition: opacity 0.25s ease;
-}
-.description{
-  height: 140px;;
-}
-</style>

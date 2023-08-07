@@ -1,17 +1,9 @@
 <script setup lang="ts">
-import { ref, inject } from 'vue'
+import { ref, inject, computed, onMounted } from 'vue'
 import Modal from './Modal.vue'
+import { useStore } from 'vuex'
 
-const products = ref([
-  { 
-    id: 1, 
-    name: '', 
-    image: '', 
-    price: null, 
-    category: null,
-    description: '' 
-  }
-]);
+const store = useStore();
 
 const globalAPI: { baseURL: string; } | undefined = inject('globalAPI')
 const valueModal = ref(false)
@@ -22,12 +14,15 @@ function openModal(id: number){
   valueModal.value = !valueModal.value;
 }
 
-function getData_prodcuts(){
-  fetch(`${globalAPI!.baseURL}api/products`)
-    .then(response => response.json())
-    .then(data => products.value = data);
-}
-getData_prodcuts()
+const fetchProducts = () => {
+  store.dispatch('fetchProducts');
+};
+
+onMounted(() => {
+  fetchProducts(); 
+})
+
+const productData = computed(() => store.getters.getProducts);
 
 </script>
 
@@ -37,7 +32,7 @@ getData_prodcuts()
       Prodcuts
     </h3>
     
-    <div class="mt-4 dashboard ">
+    <div class="mt-4 flex items-center justify-between">
       <div class="flex flex-wrap -mx-6">
         <div class="w-full px-6 mt-6 xl:mt-0">
           <div
@@ -67,7 +62,7 @@ getData_prodcuts()
 
             <div class="mx-5">
               <h4 class="text-2xl font-semibold text-gray-700">
-                {{ products.length }}
+                {{ productData.length }}
               </h4>
               <div class="text-gray-500">
                 Total Products
@@ -116,7 +111,7 @@ getData_prodcuts()
             </thead>
 
             <tbody class="bg-white">
-              <tr v-for="(item, index) in products" :key="index">
+              <tr v-for="(item, index) in productData" :key="index">
 
                 <td class="px-6 py-4 border-b border-gray-200 whitespace-nowrap">
                   <div class="text-sm leading-5 text-gray-900">
@@ -161,10 +156,3 @@ getData_prodcuts()
     </div>
   </div>
 </template>
-<style>
-.dashboard {
-  display: flex;
-  align-items: center;
-  justify-content: space-between;
-}
-</style>
